@@ -1,7 +1,8 @@
 from pathlib import Path
 
-DATA_DIR=Path("data")
-OUTPUT_DIR=Path("output")
+ROOT = Path(__file__).resolve().parent.parent
+DATA_DIR = ROOT / "data"
+OUTPUT_DIR = ROOT / "output"
 DB_PATH=OUTPUT_DIR / "chroma"
 
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
