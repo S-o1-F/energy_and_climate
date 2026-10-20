@@ -1,5 +1,5 @@
 import pymupdf
-import re
+from config import DATA_DIR, OUTPUT_DIR
 import json
 from pathlib import Path
 
@@ -32,13 +32,7 @@ def save_extracted_text(pages, output_path):
 
 
 if __name__ == "__main__":
-    pdf_path = "../data/guidlines/Dataflow1-GHG_clean.pdf"
-
-    pages = extract_pdf(pdf_path)
-
-    save_extracted_text(
-        pages,
-        "../data/extracted/Dataflow1-GHG.json"
-    )
+    pages = extract_pdf(DATA_DIR / "guidlines" / "Dataflow1-GHG_clean.pdf")
+    save_extracted_text(pages, OUTPUT_DIR / "extracted" / "Dataflow1-GHG.json")
 
     print(f"Extracted {len(pages)} pages.")

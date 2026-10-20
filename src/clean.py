@@ -1,5 +1,6 @@
 import json
 import re
+from config import DATA_DIR, OUTPUT_DIR
 from pathlib import Path
 
 def clean_text(text: str) -> str:
@@ -85,6 +86,6 @@ def clean_document(input_path, output_path):
 if __name__ == "__main__":
 
     clean_document(
-        "../data/extracted/Dataflow1-GHG.json",
-        "../data/cleaned/Dataflow1-GHG.json"
+        OUTPUT_DIR / "extracted" / "Dataflow1-GHG.json",
+        OUTPUT_DIR / "cleaned" / "Dataflow1-GHG.json"
     )
