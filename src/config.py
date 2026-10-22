@@ -12,4 +12,4 @@ CHUNK_WORDS = 200
 OVERLAP_WORDS = 40
 MIN_WORDS = 30
 
-COUNTRY = {"romania": "RO", "serbia": "RS", "guides": "EU"}
+COUNTRY = {"romania": "RO", "serbia": "RS", "guidlines": "EU"}
