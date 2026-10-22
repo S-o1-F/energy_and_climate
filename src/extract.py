@@ -38,10 +38,3 @@ def save_extracted_text(pages, output_path):
     with open(output_path,"w",encoding="utf-8") as file:
         json.dump(pages,file,ensure_ascii=False,indent=2)
 
-
-
-if __name__ == "__main__":
-    pages = extract_pdf(DATA_DIR / "romania" / "First_NECP_Romania.pdf")
-    save_extracted_text(pages, OUTPUT_DIR / "extracted" / "First_NECP_Romania.json")
-
-    print(f"Extracted {len(pages)} pages.")

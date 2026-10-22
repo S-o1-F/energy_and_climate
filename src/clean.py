@@ -43,20 +43,3 @@ def clean_pages(pages: list)->list:
 
     return cleaned_pages
 
-
-if __name__ == "__main__":
-
-    input_path = OUTPUT_DIR / "extracted" / "First_NECP_Romania.json"
-
-    output_path = OUTPUT_DIR / "cleaned" / "First_NECP_Romania.json"
-
-    with open(input_path, "r", encoding="utf-8") as file:
-        pages = json.load(file)
-
-    cleaned_pages = clean_pages(pages)
-
-    with open(output_path, "w", encoding="utf-8") as file:
-        json.dump(cleaned_pages, file, ensure_ascii=False, indent=2)
-
-    print(f"Cleaned {len(cleaned_pages)} pages.")
-
