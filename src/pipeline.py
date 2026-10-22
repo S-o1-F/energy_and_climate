@@ -7,7 +7,7 @@ from src.embeddings import create_embeddings
 
 def save_json(data,path):
     with open(path, "w", encoding="utf-8") as file:
-        json.dump(data, file, ensure_ascii=False)
+        json.dump(data, file, ensure_ascii=False, indent=2)
 
 def process_document(file_path, country):
     print("Processing file: ", file_path.name)
