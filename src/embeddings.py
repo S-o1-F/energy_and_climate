@@ -10,7 +10,7 @@ def create_embeddings(chunks):
         _model = SentenceTransformer(EMBED_MODEL)
 
     texts=[chunk['text'] for chunk in chunks]
-    embeddings=_model.encode(texts, show_progress_bar=True)
+    embeddings=_model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
 
     embedded_chunks=[]
     for chunk, embedding in zip(chunks, embeddings):
