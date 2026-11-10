@@ -1,9 +1,12 @@
 import json
 from src.config import *
+from src.index import insert_chunks
 from src.extract import extract_docx, extract_pdf
 from src.clean import clean_pages
 from src.chunking import chunk_pages
 from src.embeddings import create_embeddings
+from src.tables.extract_tables import extract_tables
+from src.tables.clean_tables import clean_tables
 
 def save_json(data,path):
     with open(path, "w", encoding="utf-8") as file:
@@ -26,12 +29,22 @@ def process_document(file_path, country):
     cleaned_pages=clean_pages(pages)
     chunks=chunk_pages(cleaned_pages, country=country)
     embedded_chunks=create_embeddings(chunks)
+    insert_chunks(embedded_chunks)
 
     output_name=f"{file_path.stem}.json"
     save_json(pages, OUTPUT_DIR / "extracted" / output_name)
     save_json(cleaned_pages, OUTPUT_DIR / "cleaned" / output_name)
     save_json(chunks, OUTPUT_DIR / "chunks" / output_name)
-    save_json(embedded_chunks, OUTPUT_DIR / "embeddings" / output_name)
+    #save_json(embedded_chunks, OUTPUT_DIR / "embeddings" / output_name)
+
+    if ".pdf" in str(file_path).lower():
+        tables=extract_tables(file_path)
+        cleaned_tables=clean_tables(tables)
+
+        table_output=OUTPUT_DIR / "tables" / "cleaned" / output_name
+        save_json(cleaned_tables, table_output)
+
+        print(f"Extracted {len(cleaned_tables)} tables")
 
     print(f"Pages extracted: {len(pages)}")
     print(f"Created {len(chunks)} chunks")
@@ -48,4 +61,6 @@ def run_pipeline():
             process_document(file_path, country)
 
 if __name__ == "__main__":
-    run_pipeline()
+    #run_pipeline()
+    file_path = DATA_DIR / "romania" / "First_NECP_Romania.pdf"
+    process_document(file_path, "RO")
