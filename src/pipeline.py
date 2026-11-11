@@ -7,10 +7,25 @@ from src.chunking import chunk_pages
 from src.embeddings import create_embeddings
 from src.tables.extract_tables import extract_tables
 from src.tables.clean_tables import clean_tables
+from src.tables.chunk_tables import table_to_chunks
 
 def save_json(data,path):
     with open(path, "w", encoding="utf-8") as file:
         json.dump(data, file, ensure_ascii=False, indent=2)
+
+
+def process_tables(file_path, country, output_name):
+    tables=clean_tables(extract_tables(file_path))
+    table_chunks=table_to_chunks(tables, country)
+
+    if table_chunks:
+        insert_chunks(create_embeddings(table_chunks))
+
+    save_json(tables, OUTPUT_DIR / "tables" / "cleaned" / output_name)
+    save_json(table_chunks, OUTPUT_DIR / "tables" / "chunks" / output_name)
+
+    print(f"Extracted {len(tables)} tables")
+    print(f"Created {len(table_chunks)} table chunks")
 
 def process_document(file_path, country):
     print("Processing file: ", file_path.name)
@@ -38,13 +53,7 @@ def process_document(file_path, country):
     #save_json(embedded_chunks, OUTPUT_DIR / "embeddings" / output_name)
 
     if ".pdf" in str(file_path).lower():
-        tables=extract_tables(file_path)
-        cleaned_tables=clean_tables(tables)
-
-        table_output=OUTPUT_DIR / "tables" / "cleaned" / output_name
-        save_json(cleaned_tables, table_output)
-
-        print(f"Extracted {len(cleaned_tables)} tables")
+        process_tables(file_path, country, output_name)
 
     print(f"Pages extracted: {len(pages)}")
     print(f"Created {len(chunks)} chunks")
