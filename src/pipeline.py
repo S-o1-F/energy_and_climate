@@ -6,7 +6,7 @@ from src.clean import clean_pages
 from src.chunking import chunk_pages
 from src.embeddings import create_embeddings
 from src.tables.extract_tables import extract_tables
-from src.tables.clean_tables import clean_tables
+from src.tables.clean_tables import clean_tables, use_manual_tables
 from src.tables.chunk_tables import table_to_chunks
 
 def save_json(data,path):
@@ -16,6 +16,12 @@ def save_json(data,path):
 
 def process_tables(file_path, country, output_name):
     tables=clean_tables(extract_tables(file_path))
+
+    manual_path=DATA_DIR/"manual_tables"/f"{file_path.stem}.json"
+    if manual_path.exists():
+        with open(manual_path, encoding="utf-8") as file:
+            tables=use_manual_tables(tables, json.load(file))
+
     table_chunks=table_to_chunks(tables, country)
 
     if table_chunks:
@@ -69,7 +75,11 @@ def run_pipeline():
         for file_path in files:
             process_document(file_path, country)
 
-if __name__ == "__main__":
+'''if __name__ == "__main__":
     #run_pipeline()
-    file_path = DATA_DIR / "romania" / "First_NECP_Romania.pdf"
-    process_document(file_path, "RO")
+    file_path = DATA_DIR / "serbia" / "RS_NECP.pdf"
+    process_document(file_path, "RS")'''
+
+if __name__ == "__main__":
+    process_document(DATA_DIR / "romania" / "First_NECP_Romania.pdf", "RO")
+    process_document(DATA_DIR / "serbia" / "RS_NECP.pdf", "RS")

@@ -2,8 +2,6 @@ import re
 import json
 from src.config import OUTPUT_DIR
 
-
-
 def normalize_whitespace(text: str) -> str:
 
     # za tab
@@ -31,6 +29,7 @@ def remove_repeated_header(text:str)->str:
 def clean_text(text: str) -> str:
     text=remove_repeated_header(text)
     text = normalize_whitespace(text)
+    text = text.replace("Error! No text of specified style in document.", "")
     return text
 
 def clean_pages(pages: list)->list:
