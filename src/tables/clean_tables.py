@@ -55,10 +55,37 @@ def add_continued_captions(tables):
         if not t["caption"] and t["source"]==prev["source"] and t["page"]==prev["page"]+1:
             t["caption"]=prev["caption"]
             t["continued"]=True
+
+            if prev["caption"].startswith("Policy measure") or header_is_data(t, prev):
+                t["data"]=[t["headers"]]+t["data"]
+                t["headers"]=prev["headers"]
     return tables
+
+def add_measure_captions(tables):
+    for t in tables:
+        if t["headers"] and t["headers"][0].startswith("Policy measure code"):
+            if t["data"] and len(t["data"][0])==1:
+                t["headers"][-1]=t["headers"][-1]+" "+t["data"][0][0]
+                t["data"]=t["data"][1:]
+            t["caption"]="Policy measure "+" ".join(t["headers"][1:])
+    return tables
+
+def use_manual_tables(tables, manual_tables):
+    manual_ids={t["table_id"] for t in manual_tables}
+    return [t for t in tables if t["table_id"] not in manual_ids]+manual_tables
+
+
+def header_is_data(t, prev):
+    return (len(t["headers"]) == len(prev["headers"])
+            and t["headers"][0] != prev["headers"][0]
+            and t["headers"][1:] != prev["headers"][1:])
+
 
 
 def clean_tables(tables):
     cleaned=[clean_table(table) for table in tables]
+    for t in cleaned:
+        t["caption"]=t["caption"].replace("Error! No text of specified style in document.", "")
+    cleaned=add_measure_captions(cleaned)
     return add_continued_captions(cleaned)
 

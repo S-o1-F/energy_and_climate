@@ -1,20 +1,17 @@
 import pymupdf
-from src.config import DOC_SETTINGS, DEFAULT_SETTINGS
+import json
+from src.config import DOC_SETTINGS, DEFAULT_SETTINGS, SKIP_TABLES
 
 
-def extract_caption(page, table, running_header):
+def extract_caption(page, table):
     x0,y0,x1,y1=table.bbox
     caption_area=pymupdf.Rect(0, max(0,y0-60), page.rect.width, y0)
     caption=page.get_text("text", clip=caption_area).strip()
     lines=caption.split("\n")
     for i in reversed(range(len(lines))):
-        if lines[i].strip().startswith("Table"):
+        if lines[i].strip().startswith(("Table", "Chart", "Figure", "Graph")):
             return  " ".join(" ".join(lines[i:]).split())
-
-    caption=" ".join(caption.split())
-    if running_header and running_header in caption:
-        return ""
-    return caption
+    return ""
 
 white=(1.0, 1.0, 1.0)
 def has_visible_lines(page, table):
@@ -45,7 +42,10 @@ def extract_tables(pdf_path):
             if not has_visible_lines(page, table):
                 continue
 
-            caption=extract_caption(page, table, settings["running_header"])
+            if f"p{page_num}_t{table_num}" in SKIP_TABLES.get(pdf_path.name, []):
+                continue
+
+            caption=extract_caption(page, table)
             if caption.startswith(("Chart", "Figure", "Graph")):
                 continue
 
@@ -64,9 +64,6 @@ def extract_tables(pdf_path):
 
     doc.close()
     return tables
-
-
-
 
 
 
