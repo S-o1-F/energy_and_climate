@@ -6,6 +6,7 @@ import re
 
 PROMPT = """Answer the question using ONLY the context below.
 Cite the document and page for every fact, like (RS_NECP.pdf, page 50).
+If the context contains several similar numbers, use the one that matches the question's quantity, year and scenario.
 
 Context:
 {context}
@@ -20,7 +21,7 @@ def build_context(results):
                        for source, page, section, content, sim in results)
 
 
-def answer(question: str, country: str = "RS", k: int = 5):
+def answer(question: str, country: str = "RO", k: int = 3):
     results = search(question, country=country, k=k)
     prompt = PROMPT.format(context=build_context(results), question=question)
     response = ollama.chat(
